@@ -62,6 +62,12 @@ export interface Concept {
   /** One-line description (skos:definition), written by the judge at mint time. Feeds embeddings (E4). */
   definition?: string | null;
   externalIds?: Record<string, string | null>;
+  /**
+   * Free-text annotation (skos:note). Optional and absent in every SKEIN-R registry; the E2
+   * enrichment (`bin/enrich-family-hint.ts`) writes a 1–4 word family/kind phrase here into a COPY
+   * of the registry. Readers must tolerate its absence.
+   */
+  note?: string | null;
   /** Observations per category — the input for soft category blocking later. */
   categoryCounts?: Record<string, number>;
   firstSeen: { doc: number; date: string };
@@ -721,6 +727,14 @@ export class ConceptRegistry {
     const record = this.#conceptSchemes[category]?.[canonical];
     if (!record) return;
     record.definition = definition;
+    this.#dirty = true;
+  }
+
+  /** skos:note — the E2 family hint; only ever written into a COPY of a frozen registry. */
+  setNote(category: string, canonical: string, note: string | null): void {
+    const record = this.#conceptSchemes[category]?.[canonical];
+    if (!record) return;
+    record.note = note;
     this.#dirty = true;
   }
 

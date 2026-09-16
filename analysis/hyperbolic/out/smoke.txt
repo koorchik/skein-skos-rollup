@@ -1,0 +1,20 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 19305.34it/s]
+env: {"python": "3.14.4", "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.43", "torch": "2.14.0+cpu", "cuda": false, "device": "cpu", "model": "Hierarchy-Transformers/HiT-MiniLM-L12-WordNetNoun", "modelSha": "b170cbfa5bb770f144c69f75f826ccbd6e0c7b53", "embeddingDim": 384, "curvature": 0.0026041666666666665, "loadSeconds": 4.53, "generatedAt": "2026-09-16T15:38:37"}
+
+model Hierarchy-Transformers/HiT-MiniLM-L12-WordNetNoun  dim=384  c=1/384  w=0.5
+child                            parent                     gold     score    dist    n(c)    n(p)  n(p)<n(c)
+Microsoft Exchange Server 2013   Microsoft Exchange Server  yes    -10.148  10.082  22.493  22.624  no
+Microsoft Exchange Server 2016   Microsoft Exchange Server  yes     -9.191   9.160  22.562  22.624  no
+Windows Server 2016              Windows                    yes    -27.613  27.611  22.136  22.140  no
+Windows 10                       Windows                    yes    -26.363  26.283  21.979  22.140  no
+Windows 10                       MS Office                  no     -29.926  29.778  21.979  22.274  no
+Firefox ESR                      Firefox                    yes    -18.374  18.496  22.773  22.528  yes
+Python 2.7.18                    Python                     yes    -21.828  22.782  22.729  20.820  yes
+Adobe Reader DC                  Adobe Acrobat Reader       yes    -13.280  13.303  22.893  22.846  yes
+Microsoft Office 2010            Microsoft Office           yes    -14.096  14.273  22.146  21.792  yes
+Firefox                          web browser                yes    -16.292  16.789  22.528  21.535  yes
+Microsoft Exchange Server        Windows                    no     -28.649  28.892  22.624  22.140  yes
+WordPress                        WP Database Reset          no     -33.587  33.094  21.428  22.415  no
+
+norm-order agrees with the hand label on 7/12 pairs

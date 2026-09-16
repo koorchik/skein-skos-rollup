@@ -13,3 +13,12 @@ runs/**/embeddings-cache/
 .DS_Store
 site/
 CLAUDE.md
+
+# Python sidecar (analysis/hyperbolic): venv and generated exchange files stay out; the environment
+# record and the smoke transcript are committed because reported numbers cite them.
+analysis/hyperbolic/.venv/
+analysis/hyperbolic/__pycache__/
+analysis/hyperbolic/in/
+analysis/hyperbolic/out/*
+!analysis/hyperbolic/out/env.json
+!analysis/hyperbolic/out/smoke.txt

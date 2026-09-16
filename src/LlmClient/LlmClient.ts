@@ -6,6 +6,7 @@ import type {
   LlmSamplingSupport,
 } from './LlmClientBackendBase';
 import type { LlmCallHandle, LlmCallLog } from './LlmCallLog';
+import { withRetry, type RetryOptions } from './retry';
 
 /**
  * Sampling parameters plus the cost-attribution context for one call.
@@ -28,6 +29,11 @@ interface Args {
    * ones added later.
    */
   callLog?: LlmCallLog;
+  /**
+   * Opt-in exponential backoff on 429/5xx/connection errors (`retry.ts`). Off by default so the
+   * paper arms keep their single-attempt semantics; the one-off enrichments pass `{}`.
+   */
+  retry?: RetryOptions;
 }
 
 export class LlmClient {
@@ -35,6 +41,7 @@ export class LlmClient {
   #costMeter?: CostMeter;
   #defaults: LlmCallOptions;
   #callLog?: LlmCallLog;
+  #retry?: RetryOptions;
   #lastHandle: LlmCallHandle | null = null;
 
   constructor(args: Args) {
@@ -42,6 +49,7 @@ export class LlmClient {
     this.#costMeter = args.costMeter;
     this.#defaults = args.defaultCallOptions ?? {};
     this.#callLog = args.callLog;
+    this.#retry = args.retry;
   }
 
   /**
@@ -58,7 +66,9 @@ export class LlmClient {
     this.#lastHandle = null;
 
     try {
-      const response = await this.#backend.send(instructions, text, effective);
+      const response = this.#retry
+        ? await withRetry(() => this.#backend.send(instructions, text, effective), this.#retry)
+        : await this.#backend.send(instructions, text, effective);
 
       this.#costMeter?.record({
         operator: operator ?? 'unknown',

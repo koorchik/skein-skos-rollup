@@ -191,5 +191,23 @@
     "sha256": "7b5280a313106a679da6b3e445aab8811d11285b2753550c30e3c41f4ec49d16",
     "variables": [],
     "bytes": 632
+  },
+  "family-hint-v1": {
+    "file": "prompts/family-hint-v1.md",
+    "extractedFrom": null,
+    "authoredFor": "bin/enrich-family-hint.ts",
+    "note": "2026-09-16: E2 enrichment for the SKOS roll-up paper — a 1–4 word family/kind phrase per concept, written into a COPY of the registry as concept.note. One batched call per ~40 concepts; never run during roll-up, only as a one-off vocabulary enrichment.",
+    "sha256": "b0b2f9068180c085a3a22e4427801f9618427e131bd3ee35d9e0bd1bbbe50b60",
+    "variables": [
+      {
+        "placeholder": "category",
+        "source": "the concept scheme (category) name"
+      },
+      {
+        "placeholder": "concepts",
+        "source": "numbered `n. prefLabel — definition` lines for one batch"
+      }
+    ],
+    "bytes": 806
   }
 }

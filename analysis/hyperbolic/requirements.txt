@@ -1,0 +1,8 @@
+# Python sidecar for E3 (hyperbolic vectors) and the geometry diagnostics.
+# Deliberately NOT hierarchy_transformers and NOT geoopt: the Poincaré ops we need are ~40 lines
+# (poincare_ops.py) and the HiT checkpoints load through plain sentence-transformers.
+torch
+sentence-transformers
+numpy
+scipy
+huggingface_hub
