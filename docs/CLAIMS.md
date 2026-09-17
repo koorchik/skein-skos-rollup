@@ -17,7 +17,7 @@ The SKEIN-R ledger this repository inherited is preserved in git history
   never backs a reported number.
 - Per-scheme reporting: `--category` one scheme at a time; the primary slice is **Software**.
 - Confidence intervals: BCa bootstrap over gold edges, seed 42, via `bin/stats.ts` machinery
-  (`src/Evaluation/bootstrap.ts`) — wiring for roll-up rows TBD (`docs/PLAN.md`).
+  (`src/Evaluation/bootstrap.ts`) — wiring for roll-up rows TBD (`docs/EXPERIMENT-PLAN.md`).
 - Run dirs live in `runs/experiments/`; the commit is the repo commit containing the output file
   under `analysis/out/`.
 

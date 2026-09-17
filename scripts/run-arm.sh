@@ -121,6 +121,6 @@ fi
   echo
   echo "## Result"
   echo
-  echo "(appended at scoring time — see docs/CLAIMS.md for the claims this run backs)"
+  echo "(appended at scoring time)"
 } > "$rundir/README.md"
 echo "=== done: $rundir (README.md written)"

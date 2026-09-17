@@ -11,8 +11,7 @@ runs/**/embeddings-cache/
 # scratch
 *.log
 .DS_Store
-site/
-CLAUDE.md
+
 
 # Python sidecar (analysis/hyperbolic): venv and generated exchange files stay out; the environment
 # record and the smoke transcript are committed because reported numbers cite them.

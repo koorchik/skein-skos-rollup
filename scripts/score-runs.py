@@ -4,7 +4,7 @@
 The run-view pages and the GitHub Pages hub display these numbers; regenerating them through
 the evaluator is what keeps the displayed metrics incapable of drifting from the paper's.
 
-Per-condition scoring scope (mirrors docs/CLAIMS.md):
+Per-condition scoring scope (inherited from SKEIN-R; the ledger is `git show 23cdfc2:docs/CLAIMS.md`):
   dev-*      → the 22-document Software dev slice (--split dev --allow-dev --category Software);
                relative evidence only, labeled `scope: dev-slice`.
   t-a2obf-*  → scored against gold/gold-obf.json (the pseudonymized gold).

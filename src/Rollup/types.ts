@@ -51,7 +51,7 @@ export function isAbstractId(target: string): boolean {
 
 export class NotImplemented extends Error {
   constructor(what: string) {
-    super(`${what} is not implemented yet — see docs/PLAN.md`);
+    super(`${what} is not implemented yet — see docs/EXPERIMENT-PLAN.md`);
     this.name = 'NotImplemented';
   }
 }

@@ -1,22 +1,11 @@
-# PLAN — method matrix, dependencies, contracts
+# CONTRACTS: operator semantics, dependencies, file and JSON contracts
 
-## Method matrix
+What the roll-up code does and which files it exchanges, as implemented. Moved verbatim from the
+former `docs/PLAN.md` (2026-09-17); the experiment plan and its status are in
+`docs/EXPERIMENT-PLAN.md`, the scoring rules in `docs/ROLLUP-PROTOCOL.md`, the commands in
+`docs/RUNBOOK.md`. Change this file in the same commit as the code it describes.
 
-Enrichments (vocabulary construction, LLM allowed, one-off, into copies) × roll-up operators
-(no LLM, parameter λ):
-
-|            | R0 graph walk | R1 facet | R2 Euclid HAC | R3 ranked parent | R4 hybrid |
-|------------|:---:|:---:|:---:|:---:|:---:|
-| none       | ✔ done (`GraphWalkRollup`) | ✔ done (`FacetRollup`) | – | – | ✔ `hybrid-facet` |
-| E1 `name: gloss` vectors | – | – | ✔ done (`HacRollup`: `hac`, `hac-constrained`, `hac-constrained-root`) | ✔ done, controls (`hyperbolic-euclid`, `hyperbolic-euclid-normfilter[-gloss]`) | ✔ `hybrid-hac`, `hybrid-euclid` |
-| E2 family-hint note | – | note as a stripping hint (R1′) | note appended to text (E1+E2) | note appended to text | – |
-| E3 HiT ball vectors | – | – | – | ✔ done (`hyperbolic-hit` on prefLabel, `hyperbolic-hit-gloss` on `prefLabel: definition`) | ✔ `hybrid-hit` |
-
-Cells marked – are not meaningful (R0 uses edges only; R1 uses labels only). Measured on the four
-baseline arms × five gold schemes: `analysis/out/rollup-r2-r4.{json,txt}` (test-test edges) and
-`rollup-r2-r4-dev.{json,txt}` (dev-dev, for λ selection only); ranker recall `analysis/out/recall-at-k.md`.
-
-### Operator semantics as implemented (WP3/WP4)
+## Operator semantics as implemented
 
 - **R2 `HacRollup`** — R1 first; each R1 target (family canonical, `facet:` node, or an unfamilied
   concept) is one representative whose vector is the L2-normalised centroid of its members' E1
@@ -106,57 +95,3 @@ bcubedR, bcubedF1, ari, probes, edgesUsed, abstractNodes, foldMs }` and each `au
 
 `RollupOperator.fold({ registry, category, vectors?, lambda }) → { target: Map<canonical, target>,
 abstractNodes: [{ id, label, members }], edgesUsed }` (`src/Rollup/types.ts`).
-
-## Work packages
-
-- WP2 (this skeleton): fork, hygiene, contracts, R0/R1 + metrics + CLIs, sidecar, baseline JSON. Done.
-- WP3: E1 embed for the four arms (ollama/embeddinggemma), R2, dev-split λ selection, geometry
-  diagnostics. Done (gemini vectors still pending budget approval).
-- WP4: E3 vectors + R3 (+ Euclidean controls); R4. Done. E2 (budget: ~800 Software concepts / 40
-  per call = 20 calls per arm) not run.
-- WP5: BCa/permutation wiring for roll-up rows (`bin/stats.ts` currently resamples identity
-  units; a `--rollup <json>` mode over gold edges is TODO), figures, CLAIMS.md rows.
-
-## TODO / open questions
-
-- `stripQualifiers` rules were written against the Software labels of the four arms; a
-  dev-split audit of false strips (e.g. `Cisco Firepower 1000 Series` in Device) is pending.
-- **Device facet weakness (noted, not changed).** On Device the facet operator has almost nothing
-  to strip (`stripQualifiers` was tuned on Software) and the gold slice is tiny (2 test-test
-  units), so R1/R2/R3 numbers on Device are not interpretable; R0 on Device folds 50 % sound at
-  λ = 0. Leave as is until the dev-split audit above; do not tune rules on the test slice.
-- **B2 replicate question (noted, not changed).** The baseline table uses `t-b2-31b-gembed2-r3`
-  for the B2 cell while the other three cells use r1 (protocol § 3: the B2 r1 headline has a
-  documented transplant prefix in r2). Whether the cell-level claim should use all three B2
-  replicates with the seed range, as SKEIN-R did, is still open.
-- HiT on `prefLabel` alone (`hit-zeroshot`) vs on `prefLabel: definition` (`hit-zeroshot-gloss`):
-  both are now measured (`recall-at-k.md`), so the encoder-vs-input confound is resolved by data.
-- `hac-constrained`'s medoid rule vs `hac-constrained-root`: both measured (`rollup-r2-r4.txt`).
-- The eTLD+1 table is a vendored approximation; replace with a full PSL if Domain ever becomes a
-  reported slice.
-- Non-additive incident counts (protocol §5) are specified but not implemented (`bin/rollup-count.ts`).
-- `LlmClient` retry is opt-in (`retry` constructor option) and used only by `enrich-family-hint`;
-  the SKEIN-R arms keep single-attempt semantics by design.
-
-## Status 2026-09-16 (end of session)
-
-Implemented and measured without LLM calls: R0, R1, R2 (`hac`, `hac-constrained`,
-`hac-constrained-root`), R3 (`hyperbolic-hit`, `-hit-gloss`, `-euclid`, `-euclid-normfilter`,
-`-euclid-normfilter-gloss`), R4 (`hybrid[all|broaderInstantial]+…`). Outputs:
-`analysis/out/rollup-r2-r4{,-dev}.{json,txt}` (2780 rows each), `analysis/out/recall-at-k.md`,
-`analysis/hyperbolic/out/geometry-<arm>-software.json` (E1 + prefLabel-HiT; gloss-HiT geometry
-not yet computed). Reading and next steps: `wiki/notes/skein-skos-rollup-paper-plan.md` in the
-dissertation repo ("Second measurements"). Tests: 812 passing.
-
-## Direction decided 2026-09-16 (see the wiki note, section "Direction after the first measurements")
-
-Roll-up stays LLM-free at query time; the hierarchy is completed at CONSTRUCTION time. Implement next:
-1. `bin/complete-hierarchy.ts` + `prompts/parent-or-family-v1.md`: one pass over unparented concepts,
-   forced choice = existing parent | new abstract family node (label + definition) | none-with-reason;
-   writes into a COPY of the registry (`<arm>-h1`), local `gemma4:26b` via ollama, register the prompt hash.
-2. `src/Rollup/PrefixParentRollup.ts`: longest token-prefix concept label of the same scheme as parent.
-3. `src/Rollup/NeighbourParentRollup.ts`: orphan inherits the judge-assigned parent of its k nearest E1
-   neighbours when ≥ m of them agree.
-4. `bin/clean-edges.ts`: cycle removal, transitive reduction, label-consistency check (no LLM).
-Then rerun `rollup-eval` on the `-h1` registries; success = completeness → ~100 % on gold with soundness ≥ R0.
-Not pursued as the main line: zero-shot HiT, HAC as parent finder, HiT/Poincaré fine-tuning on 275 edges (negative results, keep in the paper).

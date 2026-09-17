@@ -4,8 +4,27 @@ One directory per experimental arm — never more than one version of each. Ever
 self-describing: `README.md` (purpose + configuration + result), `run-card.json` (authoritative
 config, git/prompt fingerprint), `registry.json` (final SKOS registry), `decisions.jsonl`
 (scorable decision log), `llm-calls/` (full transcripts), `run-view.html` (replay page).
-The claims–evidence matrix `docs/CLAIMS.md` maps every paper claim to its directory and scoring
-command; `docs/REPRODUCE.md` re-runs anything from scratch.
+This is the SKEIN-R index, carried unchanged below the next section. The SKEIN-R claims–evidence
+matrix and reproduction runbook are not kept in this repository: read them with
+`git show 23cdfc2:docs/CLAIMS.md` and `git show 23cdfc2:docs/REPRODUCE.md`, or in `skein-resolver`.
+
+## Role in article 4: these arms are the INPUT of the roll-up paper
+
+Nothing in these directories is ever modified. The roll-up code reads `registry.json` of:
+
+| cell | arm read today | note |
+|---|---|---|
+| A1 | `t-a1-flash-gembed2-r1-35bc1387d473` | |
+| A2 | `t-a2-flash-egemma-r1-a7d0a4e56984` | |
+| B1 | `t-b1-31b-egemma-r1-4337e00db336` | |
+| B2 | `t-b2-31b-gembed2-r3-1f86ee33b8cc` | r3, not the headline r1: see `docs/ROLLUP-PROTOCOL.md` §3 and `t-b2-31b-gembed2-r2-*/TRANSPLANT.md` |
+
+A claim about a factorial *cell* uses all three replicates of that cell (12 arms). The guard arms
+(`t-a2guard2-*`) are candidate inputs because the Exchange probe passes vacuously on registries
+with chain merges (`docs/EXPERIMENT-PLAN.md`, open decisions). Construction-time steps write
+COPIES next to the source arm and never into it: `<arm>-e2/` (family hints, E2) and `<arm>-h1/`
+(completed hierarchy, H1); none exists yet. All other arms are unused by the roll-up code and are
+kept as the frozen SKEIN-R record.
 
 **The paper's headline result** is the open-weight factorial cell **B2** — best identity of any
 arm (pairwise F1 .661, B-cubed .975 on the paper's primary universe; .613/.983 with Domain

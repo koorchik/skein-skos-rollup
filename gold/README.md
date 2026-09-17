@@ -1,9 +1,35 @@
 # Gold table (FROZEN)
 
 **`gold-aliases-v2` — 3,201 clusters / 398 hierarchy edge rows (392 distinct cluster pairs) /
-4,069 NIL labels.** This copy is the evaluation reference for the SKEIN-R paper and is frozen:
-any change would bump the gold version and invalidate the claims ledger (`docs/CLAIMS.md`) by
-construction.
+4,069 NIL labels.** This is a byte-identical, read-only copy of the SKEIN-R evaluation reference
+(`skein-resolver/gold/`). It is never edited here: any change would silently fork the gold version
+that the SKEIN-R claims are scored against. New annotation gets a new file name.
+
+## Role in article 4 (SKEIN-SKOS-rollup)
+
+- **The typed hierarchy edges are the roll-up reference.** 398 edge rows between gold clusters:
+  232 `part-of`, 164 `isa`, 2 `renamed-to`. By scheme (the edge's `category`): Software 210,
+  Sector 117, Government Body 33, Organization 16, Device 11, Infrastructure 6, HackerGroup 4,
+  Country 1. Sound% and complete% are computed over the transitive ancestry of these edges
+  (`src/Evaluation/rollupMetrics.ts`, `goldAncestry`).
+- **Split discipline.** An edge is test-test when both endpoint clusters are test clusters:
+  278 test-test (Software 154, Sector 75, Government Body 29, Organization 9, Infrastructure 6,
+  Device 2, HackerGroup 2, Country 1), 110 cross, 10 dev-dev. Only test-test edges back a
+  reported number; dev-dev edges select λ; cross edges are used by neither
+  (`docs/ROLLUP-PROTOCOL.md`). With 10 dev-dev edges, dev selection is weak: say so in the paper.
+- **Known biases for this use.** Rows tagged `rule: "pooled-adjudication"` were adjudicated from
+  candidates pooled across SKEIN-R system outputs, the same family of registries that is folded
+  here, so completeness against them is biased upward for
+  stored judge edges (R0); `scripts/gold-slice.py --exclude-rule pooled-adjudication` gives the
+  independent-provenance panel. The hierarchy is shallow and partial: most concepts have no gold
+  ancestor and fall outside every denominator.
+- **What it lacks.** No gold for minted abstract family nodes, no depth or rung labels, Device
+  and Organization too small to interpret, no second annotator. The extension to
+  `hierarchy-v3` (Software plus one attribution scheme) is an open decision
+  (`docs/EXPERIMENT-PLAN.md`); it would be a new file built with the protocol of
+  `docs/GOLD-TABLE.md`.
+
+Everything below is the unchanged SKEIN-R description of the table.
 
 Built in the source repo (`llm-analysis-of-text-data/llm-basic-framework`) by the gold pipeline
 documented in `docs/GOLD-TABLE.md`; the builder itself is deliberately NOT carried into this
